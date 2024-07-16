@@ -26,6 +26,6 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "flowbite": "^2.3.0"
+    "flowbite": "^2.4.1"
   }
 }
