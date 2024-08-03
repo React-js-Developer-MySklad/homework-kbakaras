@@ -1,8 +1,9 @@
-import html from "./app.html";
+import htmlApp from "./app.html";
+import htmlModal from "./add-table-row-modal.html";
 import './app.css'
 
-const rootElement = document.getElementById('root');
-rootElement.innerHTML = String(html);
+document.getElementById('root').innerHTML = String(htmlApp);
+document.getElementById('add-table-row-modal').innerHTML = String(htmlModal);
 
 const contractors = [
     {
