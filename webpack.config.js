@@ -2,14 +2,19 @@ const path = require('path');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
-    entry: './src/main.jsx',
+    entry: './main.tsx',
+    context: path.resolve(__dirname, 'src'),
+    resolve: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    },
     module: {
 
         rules: [
             {
-                test: /\.jsx?$/,
+                test: /\.(js|ts)x?$/,
                 use: 'babel-loader',
                 exclude: /node_modules/,
             },
@@ -41,12 +46,16 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            template: "./src/index.html",
-        }),
+        new HtmlWebpackPlugin({template: 'index.html'}),
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename: 'css/[name].css',
+        }),
+        new ForkTsCheckerWebpackPlugin({
+            typescript: {
+                configFile: path.resolve(__dirname, 'tsconfig.json')
+            }
         })
     ]
-};
+
+}
