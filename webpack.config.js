@@ -4,15 +4,18 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
-    entry: './src/main.js',
+    entry: './src/main.jsx',
     module: {
 
         rules: [
             {
+                test: /\.jsx?$/,
+                use: 'babel-loader',
+                exclude: /node_modules/,
+            },
+            {
                 test: /\.css$/i,
-                include: [
-                    path.resolve(__dirname, 'src')
-                ],
+                include: path.resolve(__dirname, 'src'),
                 use: [
                     'style-loader',
                     {
