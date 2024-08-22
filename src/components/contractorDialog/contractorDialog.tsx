@@ -4,27 +4,39 @@ import {TextInput} from "../textInput/textInput";
 
 export type ContractorDataCommit = (contractor: ContractorData) => void;
 
-interface contractorDialogProps {
-    visible: boolean,
-    data: ContractorData,
-    onClose: () => void,
-    onCommit: ContractorDataCommit
+export const newContractor: ContractorData = {
+    "Наименование": "",
+    "ИНН": "",
+    "Адрес": "",
+    "КПП": ""
+};
+
+export interface DialogState {
+    data: ContractorData
+    visible: boolean
+    commit: ContractorDataCommit
 }
 
-export const ContractorDialog: React.FC<contractorDialogProps> = ({
-                                                                      visible,
-                                                                      data,
-                                                                      onClose,
-                                                                      onCommit
-                                                                  }) => {
+export const dialogClosed: DialogState = {
+    data: {...newContractor},
+    visible: false,
+    commit: undefined
+}
 
-    const [contractor, setContractor] = useState<ContractorData>(data);
+interface ContractorDialogProps {
+    state: DialogState
+    onClose: () => void
+}
 
-    const handleCommit = useCallback(() => onCommit(contractor), [contractor]);
+export const ContractorDialog: React.FC<ContractorDialogProps> = ({state, onClose}) => {
+
+    const [contractor, setContractor] = useState<ContractorData>(state.data);
+
+    const handleCommit = useCallback(() => state.commit(contractor), [contractor]);
 
     useEffect(() => {
-        setContractor(data);
-    }, [data]);
+        setContractor(state.data);
+    }, [state]);
 
     const onChangeName = useCallback((value: string) =>
         setContractor({...contractor, "Наименование": value}), [contractor]);
@@ -35,7 +47,7 @@ export const ContractorDialog: React.FC<contractorDialogProps> = ({
     const onChangeKpp = useCallback((value: string) =>
         setContractor({...contractor, "КПП": value}), [contractor]);
 
-    return !visible ? null :
+    return !state.visible ? null :
         <div className="fixed inset-0 flex items-center justify-center z-50">
 
             {/* Затемнённый фон */}

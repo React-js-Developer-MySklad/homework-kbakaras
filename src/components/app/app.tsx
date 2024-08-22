@@ -1,27 +1,8 @@
 import React, {useCallback, useContext, useState} from "react";
 import {ContractorTable} from "../contractorTable/contractorTable"
-import {ContractorDialog, ContractorDataCommit} from "../contractorDialog/contractorDialog"
+import {ContractorDialog, DialogState, dialogClosed, newContractor} from "../contractorDialog/contractorDialog"
 import {ContractorData} from "../../types";
 import {ContractorContext} from "../../contexts/ContractorContext";
-
-const newContractor: ContractorData = {
-    "Наименование": "",
-    "ИНН": "",
-    "Адрес": "",
-    "КПП": ""
-};
-
-interface DialogState {
-    data: ContractorData
-    visible: boolean
-    commit: ContractorDataCommit
-}
-
-const dialogClosed: DialogState = {
-    data: {...newContractor},
-    visible: false,
-    commit: undefined
-}
 
 export const App: React.FC = () => {
 
@@ -86,10 +67,7 @@ export const App: React.FC = () => {
                 </button>
             </header>
 
-            <ContractorDialog data={dialogState.data}
-                              visible={dialogState.visible}
-                              onCommit={dialogState.commit}
-                              onClose={closeDialog}/>
+            <ContractorDialog state={dialogState} onClose={closeDialog}/>
 
             <main>
                 <ContractorTable tableData={context.contractors} onEdit={editContractor} onDelete={deleteContractor}/>
