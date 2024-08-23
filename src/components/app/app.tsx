@@ -1,6 +1,6 @@
 import React, {useCallback, useContext, useState} from "react";
 import {ContractorTable} from "../contractorTable/contractorTable"
-import {ContractorDialog, DialogState, dialogClosed, newContractor} from "../contractorDialog/contractorDialog"
+import {ContractorDialog, DialogState, newContractor} from "../contractorDialog/contractorDialog"
 import {ContractorData} from "../../types";
 import {ContractorContext} from "../../contexts/ContractorContext";
 
@@ -8,10 +8,8 @@ export const App: React.FC = () => {
 
     const context = useContext(ContractorContext);
 
-    const [dialogState, setDialogState] = useState<DialogState>(dialogClosed);
-
-
-    const closeDialog = useCallback(() => setDialogState(dialogClosed), []);
+    const [dialogState, setDialogState] = useState<DialogState | undefined>(undefined);
+    const closeDialog = useCallback(() => setDialogState(undefined), []);
 
     const deleteContractor = useCallback((id: string) => {
         context.deleteContractor(id);
@@ -21,7 +19,6 @@ export const App: React.FC = () => {
         let contractor = context.contractors.find(value => value.id === id);
         setDialogState({
             data: {...contractor},
-            visible: true,
             commit: (contractor: ContractorData) => {
                 context.updateContractor(id, contractor);
                 closeDialog();
@@ -32,7 +29,6 @@ export const App: React.FC = () => {
     const addContractor = useCallback(() => {
         setDialogState({
             data: {...newContractor},
-            visible: true,
             commit: (contractor: ContractorData) => {
                 context.addContractor(contractor);
                 closeDialog();
@@ -67,7 +63,7 @@ export const App: React.FC = () => {
                 </button>
             </header>
 
-            <ContractorDialog state={dialogState} onClose={closeDialog}/>
+            {dialogState !== undefined && <ContractorDialog state={dialogState} onClose={closeDialog}/>}
 
             <main>
                 <ContractorTable tableData={context.contractors} onEdit={editContractor} onDelete={deleteContractor}/>

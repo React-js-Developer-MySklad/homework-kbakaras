@@ -2,8 +2,6 @@ import React, {useCallback, useEffect, useState} from "react";
 import {ContractorData} from "../../types";
 import {TextInput} from "../textInput/textInput";
 
-export type ContractorDataCommit = (contractor: ContractorData) => void;
-
 export const newContractor: ContractorData = {
     "Наименование": "",
     "ИНН": "",
@@ -13,14 +11,7 @@ export const newContractor: ContractorData = {
 
 export interface DialogState {
     data: ContractorData
-    visible: boolean
-    commit: ContractorDataCommit
-}
-
-export const dialogClosed: DialogState = {
-    data: {...newContractor},
-    visible: false,
-    commit: undefined
+    commit: (contractor: ContractorData) => void
 }
 
 interface ContractorDialogProps {
@@ -47,7 +38,7 @@ export const ContractorDialog: React.FC<ContractorDialogProps> = ({state, onClos
     const onChangeKpp = useCallback((value: string) =>
         setContractor({...contractor, "КПП": value}), [contractor]);
 
-    return !state.visible ? null :
+    return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
 
             {/* Затемнённый фон */}
@@ -112,5 +103,5 @@ export const ContractorDialog: React.FC<ContractorDialogProps> = ({state, onClos
                 </div>
 
             </div>
-        </div>;
+        </div>);
 }
