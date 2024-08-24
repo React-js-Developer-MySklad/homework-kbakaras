@@ -3,10 +3,11 @@ import React, {useCallback} from "react";
 interface TextInputProps {
     title: string,
     value: string,
+    error: any | undefined,
     onChange: (value: string) => void;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({title, value, onChange}) => {
+export const TextInput: React.FC<TextInputProps> = ({title, value, error, onChange}) => {
 
     const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         onChange(event.target.value);
@@ -23,5 +24,6 @@ export const TextInput: React.FC<TextInputProps> = ({title, value, onChange}) =>
                               focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500
                               dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500
                               dark:focus:border-primary-500"/>
+            {error && <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error.message}</p>}
         </div>);
 }
