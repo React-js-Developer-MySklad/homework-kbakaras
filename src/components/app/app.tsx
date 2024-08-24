@@ -1,88 +1,43 @@
-import React, {useCallback, useState} from "react";
-import {StrictMode} from "react";
+import React, {useCallback, useContext, useState} from "react";
 import {ContractorTable} from "../contractorTable/contractorTable"
-import {ContractorDialog, ContractorDataCommit} from "../contractorDialog/contractorDialog"
-import {ContractorData, Contractor} from "../../types";
-import {v4} from "uuid";
-
-const newContractor: ContractorData = {
-    "Наименование": "",
-    "ИНН": "",
-    "Адрес": "",
-    "КПП": ""
-};
-
-interface DialogState {
-    data: ContractorData
-    visible: boolean
-    commit: ContractorDataCommit
-}
-
-const dialogClosed: DialogState = {
-    data: {...newContractor},
-    visible: false,
-    commit: undefined
-}
+import {ContractorDialog, DialogState, newContractor} from "../contractorDialog/contractorDialog"
+import {ContractorData} from "../../types";
+import {ContractorContext} from "../../contexts/ContractorContext";
 
 export const App: React.FC = () => {
 
-    const [contractors, setContractors] = useState<Contractor[]>([
-        {
-            id: 'bf753d4e-d073-4848-8ac0-87fc9a490a7a',
-            "Наименование": "ООО Рога и Копыта",
-            "ИНН": "7723931036",
-            "Адрес": "contact@rogiikopyta.ru",
-            "КПП": "772301001"
-        },
-        {
-            id: '9b2d3c57-f0d1-4b9d-b641-9194889f616d',
-            "Наименование": "ООО Рога и Копыта 2",
-            "ИНН": "7723931037",
-            "Адрес": "contact@rogiikopyta2.ru",
-            "КПП": "772301001"
-        },
-    ]);
+    const context = useContext(ContractorContext);
 
-    const [dialogState, setDialogState] = useState<DialogState>(dialogClosed);
-
-
-    const closeDialog = useCallback(() => setDialogState(dialogClosed), []);
+    const [dialogState, setDialogState] = useState<DialogState | undefined>(undefined);
+    const closeDialog = useCallback(() => setDialogState(undefined), []);
 
     const deleteContractor = useCallback((id: string) => {
-        const index = contractors.findIndex(contractor => contractor.id === id);
-        if (index !== -1) {
-            setContractors(contractors.toSpliced(index, 1));
-        }
-    }, [contractors]);
+        context.deleteContractor(id);
+    }, [context]);
 
     const editContractor = useCallback((id: string) => {
-        let contractor = contractors.find(value => value.id === id);
+        let contractor = context.contractors.find(value => value.id === id);
         setDialogState({
             data: {...contractor},
-            visible: true,
             commit: (contractor: ContractorData) => {
-                setContractors(contractors.map(element => element["id"] === id
-                    ? {"id": id, ...contractor}
-                    : element));
+                context.updateContractor(id, contractor);
                 closeDialog();
             }
         });
-    }, [contractors]);
+    }, [context]);
 
     const addContractor = useCallback(() => {
         setDialogState({
             data: {...newContractor},
-            visible: true,
             commit: (contractor: ContractorData) => {
-                setContractors([...contractors, {id: v4(), ...contractor}]);
+                context.addContractor(contractor);
                 closeDialog();
             }
         });
-    }, [contractors]);
+    }, [context]);
 
     return (
-        <StrictMode>
-
+        <>
             <header className="grid py-[12px] grid-cols-[1fr_auto]">
                 <img src="/images/logo.svg" alt="МойСклад"/>
 
@@ -108,13 +63,10 @@ export const App: React.FC = () => {
                 </button>
             </header>
 
-            <ContractorDialog data={dialogState.data}
-                              visible={dialogState.visible}
-                              onCommit={dialogState.commit}
-                              onClose={closeDialog}/>
+            {dialogState !== undefined && <ContractorDialog state={dialogState} onClose={closeDialog}/>}
 
             <main>
-                <ContractorTable tableData={contractors} onDelete={deleteContractor} onEdit={editContractor}/>
+                <ContractorTable tableData={context.contractors} onEdit={editContractor} onDelete={deleteContractor}/>
             </main>
 
             <footer
@@ -125,7 +77,6 @@ export const App: React.FC = () => {
                     © 2007–2024 ООО «Логнекс».
                 </span>
             </footer>
-
-        </StrictMode>
+        </>
     );
 }
