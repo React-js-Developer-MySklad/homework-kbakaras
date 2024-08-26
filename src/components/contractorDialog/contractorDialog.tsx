@@ -1,41 +1,8 @@
 import React from "react";
-import {Contractor} from "../../types";
+import {Contractor, ContractorValidate} from "../../types";
 import {TextInput} from "../textInput/textInput";
 import {Form, Field} from 'react-final-form';
 
-const validateName = (value: string) => {
-    return value === "" ? {message: "Заполните наименование контрагента"} : undefined;
-};
-
-const validateInn = (value: string) => {
-
-    if (!value) return {message: "Заполните ИНН контрагента"};
-
-    if (!/^\d+$/.test(value)) {
-        return {message: "ИНН должен содержать только цифры"};
-    }
-
-    if (value.length !== 10 && value.length !== 12) {
-        return {message: "ИНН должен содержать 10 или 12 цифр"};
-    }
-
-    return undefined;
-};
-
-const validateKpp = (value: string) => {
-
-    if (!value) return {message: "Заполните КПП контрагента"};
-
-    if (!/^\d+$/.test(value)) {
-        return {message: "КПП должен содержать только цифры"};
-    }
-
-    if (value.length !== 9) {
-        return {message: "КПП должен содержать 9 цифр"};
-    }
-
-    return undefined;
-};
 
 interface ContractorDialogProps {
     data: Contractor
@@ -81,16 +48,16 @@ export const ContractorDialog: React.FC<ContractorDialogProps> = ({data, onClose
                           <div className="relative p-4 w-full max-w-md max-h-full">
 
                               <div className="grid gap-4 mb-4">
-                                  <Field name="Наименование" validate={validateName}>{props =>
+                                  <Field name="Наименование" validate={ContractorValidate.Name}>{props =>
                                       <TextInput title="Наименование" {...props.input} error={props.meta.error}/>
                                   }</Field>
-                                  <Field name="ИНН" validate={validateInn}>{props =>
+                                  <Field name="ИНН" validate={ContractorValidate.Inn}>{props =>
                                       <TextInput title="ИНН" {...props.input} error={props.meta.error}/>
                                   }</Field>
                                   <Field name="Адрес">{props =>
                                       <TextInput title="Адрес" {...props.input} error={props.meta.error}/>
                                   }</Field>
-                                  <Field name="КПП" validate={validateKpp}>{props =>
+                                  <Field name="КПП" validate={ContractorValidate.Kpp}>{props =>
                                       <TextInput title="КПП" {...props.input} error={props.meta.error}/>
                                   }</Field>
                               </div>
