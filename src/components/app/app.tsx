@@ -1,15 +1,24 @@
 import React, {useCallback, useContext, useState} from "react";
 import {ContractorTable} from "../contractorTable/contractorTable"
-import {ContractorDialog, DialogState, newContractor} from "../contractorDialog/contractorDialog"
-import {ContractorData} from "../../types";
+import {ContractorDialog} from "../contractorDialog/contractorDialog"
+import {Contractor, NewContractor} from "../../types";
 import {ContractorContext} from "../../contexts/ContractorContext";
 
 export const App: React.FC = () => {
 
     const context = useContext(ContractorContext);
 
-    const [dialogState, setDialogState] = useState<DialogState | undefined>(undefined);
+    const [dialogState, setDialogState] = useState<Contractor | undefined>(undefined);
     const closeDialog = useCallback(() => setDialogState(undefined), []);
+    const commitDialog = useCallback((contractor : Contractor) => {
+        if (contractor.id === undefined) {
+            context.addContractor(contractor);
+        } else {
+            context.updateContractor(contractor);
+        }
+        closeDialog();
+    }, [context]);
+
 
     const deleteContractor = useCallback((id: string) => {
         context.deleteContractor(id);
@@ -17,23 +26,11 @@ export const App: React.FC = () => {
 
     const editContractor = useCallback((id: string) => {
         let contractor = context.contractors.find(value => value.id === id);
-        setDialogState({
-            data: {...contractor},
-            commit: (contractor: ContractorData) => {
-                context.updateContractor(id, contractor);
-                closeDialog();
-            }
-        });
+        setDialogState(contractor);
     }, [context]);
 
     const addContractor = useCallback(() => {
-        setDialogState({
-            data: {...newContractor},
-            commit: (contractor: ContractorData) => {
-                context.addContractor(contractor);
-                closeDialog();
-            }
-        });
+        setDialogState(NewContractor());
     }, [context]);
 
     return (
@@ -63,7 +60,7 @@ export const App: React.FC = () => {
                 </button>
             </header>
 
-            {dialogState !== undefined && <ContractorDialog state={dialogState} onClose={closeDialog}/>}
+            {dialogState !== undefined && <ContractorDialog data={dialogState} onClose={closeDialog} onCommit={commitDialog}/>}
 
             <main>
                 <ContractorTable tableData={context.contractors} onEdit={editContractor} onDelete={deleteContractor}/>

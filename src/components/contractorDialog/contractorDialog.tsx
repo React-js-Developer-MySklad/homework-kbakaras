@@ -1,24 +1,7 @@
 import React from "react";
-import {ContractorData} from "../../types";
+import {Contractor} from "../../types";
 import {TextInput} from "../textInput/textInput";
 import {Form, Field} from 'react-final-form';
-
-export const newContractor: ContractorData = {
-    "Наименование": "",
-    "ИНН": "",
-    "Адрес": "",
-    "КПП": ""
-};
-
-export interface DialogState {
-    data: ContractorData
-    commit: (contractor: ContractorData) => void
-}
-
-interface ContractorDialogProps {
-    state: DialogState
-    onClose: () => void
-}
 
 const validateName = (value: string) => {
     return value === "" ? {message: "Заполните наименование контрагента"} : undefined;
@@ -54,11 +37,17 @@ const validateKpp = (value: string) => {
     return undefined;
 };
 
-export const ContractorDialog: React.FC<ContractorDialogProps> = ({state, onClose}) => {
+interface ContractorDialogProps {
+    data: Contractor
+    onClose: () => void
+    onCommit: (contractor: Contractor) => void
+}
+
+export const ContractorDialog: React.FC<ContractorDialogProps> = ({data, onClose, onCommit}) => {
 
     return (
-        <Form onSubmit={state.commit}
-              initialValues={state.data}
+        <Form onSubmit={onCommit}
+              initialValues={data}
               render={({handleSubmit, submitting, pristine}) => (
 
                   <div className="fixed inset-0 flex items-center justify-center z-50">

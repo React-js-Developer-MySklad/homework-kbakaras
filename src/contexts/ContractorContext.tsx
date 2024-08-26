@@ -1,12 +1,12 @@
 import React, {createContext, useState, useEffect, ReactNode} from 'react';
 import axios from 'axios';
-import {Contractor, ContractorData} from '../types';
+import {Contractor} from '../types';
 import {v4} from "uuid";
 
 interface ContractorContextProps {
     contractors: Contractor[];
-    addContractor: (newContractor: ContractorData) => void;
-    updateContractor: (id: string, updatedContractor: ContractorData) => void;
+    addContractor: (newContractor: Contractor) => void;
+    updateContractor: (updatedContractor: Contractor) => void;
     deleteContractor: (id: string) => void;
 }
 
@@ -34,7 +34,7 @@ const ContractorProvider: React.FC<{ children: ReactNode }> = ({children}) => {
         });
     }, []);
 
-    const addContractor = async (newContractor: ContractorData) => {
+    const addContractor = async (newContractor: Contractor) => {
         try {
             const response: Axios.AxiosXHR<Contractor> = await api.post(`contractors`, {id: v4(), ...newContractor});
             setContractors([...contractors, response.data]);
@@ -43,11 +43,15 @@ const ContractorProvider: React.FC<{ children: ReactNode }> = ({children}) => {
         }
     };
 
-    const updateContractor = async (id: string, updatedContractor: ContractorData) => {
+    const updateContractor = async (updatedContractor: Contractor) => {
         try {
-            await api.put(`contractors/${id}`, {id : id, ...updatedContractor});
-            setContractors(contractors.map(contractor => (contractor.id === id
-                ? {id: id, ...updatedContractor}
+            if (updatedContractor.id === undefined) {
+                // noinspection ExceptionCaughtLocallyJS
+                throw "У обновляемого контрагента должен быть идентификатор";
+            }
+            await api.put(`contractors/${updatedContractor.id}`, updatedContractor);
+            setContractors(contractors.map(contractor => (contractor.id === updatedContractor.id
+                ? updatedContractor
                 : contractor)));
         } catch (error) {
             console.error('Не удалось обновить контрагента:', error);

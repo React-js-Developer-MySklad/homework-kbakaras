@@ -1,2 +1,17 @@
-export interface ContractorData { "Наименование": string; "Адрес": string; "КПП": string; "ИНН": string }
-export type Contractor = { id: string } & ContractorData;
+export interface Contractor {
+    id: string | undefined,
+    "Наименование": string;
+    "Адрес": string;
+    "КПП": string;
+    "ИНН": string
+}
+
+export const NewContractor = (): Contractor => {
+    return {
+        id: undefined,
+        "Наименование": "",
+        "ИНН": "",
+        "Адрес": "",
+        "КПП": ""
+    }
+};
