@@ -1,5 +1,6 @@
 import React from "react";
-import {Contractor, ContractorValidate} from "../../types";
+import {Contractor} from "../../types";
+import {ContractorValidate} from "../../validation";
 import {TextInput} from "../textInput/textInput";
 import {Form, Field} from 'react-final-form';
 
