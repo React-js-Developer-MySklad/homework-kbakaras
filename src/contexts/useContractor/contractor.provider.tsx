@@ -1,20 +1,14 @@
-import React, {createContext, useState, useEffect, ReactNode} from 'react';
+import React, {useState, useEffect, ReactNode} from 'react';
 import axios from 'axios';
-import {Contractor} from '../types';
+import {Contractor} from '../../types';
 import {v4} from "uuid";
+import { ContractorContext } from './contractor.context';
 
-interface ContractorContextProps {
-    contractors: Contractor[];
-    addContractor: (newContractor: Contractor) => void;
-    updateContractor: (updatedContractor: Contractor) => void;
-    deleteContractor: (id: string) => void;
-}
 
 const api = axios.create({
     baseURL: 'http://localhost:3001/'
 });
 
-const ContractorContext = createContext<ContractorContextProps | undefined>(undefined);
 
 const ContractorProvider: React.FC<{ children: ReactNode }> = ({children}) => {
 

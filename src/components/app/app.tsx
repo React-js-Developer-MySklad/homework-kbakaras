@@ -1,12 +1,12 @@
-import React, {useCallback, useContext, useState} from "react";
+import React, {useCallback, useState} from "react";
 import {ContractorTable} from "../contractorTable/contractorTable"
 import {ContractorDialog} from "../contractorDialog/contractorDialog"
 import {Contractor, NewContractor} from "../../types";
-import {ContractorContext} from "../../contexts/ContractorContext";
+import {useContractor} from "../../contexts/useContractor/contractor.hook";
 
 export const App: React.FC = () => {
 
-    const context = useContext(ContractorContext);
+    const context = useContractor();
 
     const [dialogState, setDialogState] = useState<Contractor | undefined>(undefined);
     const closeDialog = useCallback(() => setDialogState(undefined), []);
